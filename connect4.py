@@ -68,7 +68,11 @@ def drawBoard(board):
                 pygame.draw.circle(screen, YELLOW, (int(c*SQUARESIZE+SQUARESIZE/2), height-int(r*SQUARESIZE+SQUARESIZE/2)), RADIUS)
     pygame.display.update()
 
-    
+def isColumnFull(board, column):
+    if board[ROW_COUNT-1][column] != 0:
+        return True
+    else:
+        return False
 
 
 board = createBoard()
@@ -87,7 +91,7 @@ drawBoard(board)
 pygame.display.update()
 
 myFont = pygame.font.SysFont("monospace", 75)
-
+myValidationFont = pygame.font.SysFont("monospace", 35)
 while not gameOver:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -107,19 +111,28 @@ while not gameOver:
             if turn == 0:
                 posx = event.pos[0]
                 column = int(math.floor(posx/SQUARESIZE))
+                if isColumnFull(board, column):
+                    label = myValidationFont.render("Full!! Choose another column", 1, RED)
+                    screen.blit(label, (20, 5))
+                    turn += 1
                 if isValidLocation(board, column):
                     row = getNextOpenRow(board, column)
                     dropPiece(board, row, column, 1)
                     if winningMove(board, 1):
                         label = myFont.render("Player 1 wins!!", 1, RED)
                         screen.blit(label, (40, 10))
-                        gameOver = True
+                        gameOver = True                  
             else:
                 posx = event.pos[0]
                 column = int(math.floor(posx/SQUARESIZE))
+                if isColumnFull(board, column):
+                    label = myValidationFont.render("Full!! Choose another column", 1, RED)
+                    screen.blit(label, (20, 5))
+                    turn += 1
                 if isValidLocation(board, column):
                     row = getNextOpenRow(board, column)
                     dropPiece(board, row, column, 2)
+
                     if winningMove(board, 2):
                         label = myFont.render("Player 2 wins!!", 1, RED)
                         screen.blit(label, (40, 10))
